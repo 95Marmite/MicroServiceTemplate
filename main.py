@@ -1,20 +1,20 @@
-from datetime import timedelta
 import logging.config
+from datetime import timedelta
 from typing import Annotated
+
+import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel
-import uvicorn
 from sqlalchemy.orm import Session
-from database.database import engine, Base, get_db
+
 from api.auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     authenticate_user,
     create_access_token,
 )
 from api.user import user_router
-
-from config import api_conf
+from database.database import engine, Base, get_db
 
 app = FastAPI(debug=True)
 app.include_router(user_router)

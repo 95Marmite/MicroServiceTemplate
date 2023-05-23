@@ -1,12 +1,13 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Annotated, Optional
-from database.user import User
-from database.database import SessionLocal
 
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+
+from database.database import SessionLocal
+from database.user import User
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"

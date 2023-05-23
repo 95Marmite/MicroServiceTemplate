@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import select
-from database.user import User
+from sqlalchemy.orm import Session
+
 from database.database import engine
+from database.user import User
 
 
 def get_user(username: str):

@@ -1,14 +1,16 @@
 import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database.user import User
-from database.database import SessionLocal, engine, Base, get_db
-from api.user.crud import get_user, create_user, delete_user, update_password
+
 from api.auth import (
     get_current_active_user,
     get_current_user,
     get_password_hash,
 )
+from api.user.crud import get_user, create_user, delete_user, update_password
+from database.database import get_db
+from database.user import User
 
 user_router = APIRouter(prefix="/user", tags=["User"])
 
