@@ -3,9 +3,10 @@ from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Annotated, Optional
 from database.user import User
 from database.database import SessionLocal
+
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -65,3 +66,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
             headers={"WWW-Authenticate": "Bearer"},
         )
     return user
+
+
+def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user

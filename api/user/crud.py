@@ -4,7 +4,7 @@ from database.user import User
 from database.database import engine
 
 
-def get_user(db: Session, username: str):
+def get_user(username: str):
     with engine.connect() as conn:
         stmt = select(User).where(User.username == username)
         return conn.execute(stmt).fetchone()
