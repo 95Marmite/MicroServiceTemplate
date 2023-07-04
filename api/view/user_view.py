@@ -1,35 +1,34 @@
-import logging
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from api import logging
 from api.auth import (
     get_current_active_user,
     get_current_user,
     get_password_hash,
 )
-from api.user.crud import get_user, create_user, delete_user, update_password
-from database.database import get_db
-from database.user import User
+from api.controller.user_controller import get_user, create_user, delete_user, update_password
+from api.utils.database import get_db
+from api.model.user_model import User
 
 user_router = APIRouter(prefix="/user", tags=["User"])
 
 
 @user_router.post("/", status_code=201)
 def create_user_endpoint(username: str, password: str, db: Session = Depends(get_db)):
-    user = get_user(db, username)
+    user = get_user(username)
     if user:
         raise HTTPException(status_code=400, detail="Username already registered")
     hashed_password = get_password_hash(password)
-    logging.debug(hashed_password)
+    logging.get_logger(__name__).debug(hashed_password)
     return create_user(db, username, hashed_password)
 
 
 @user_router.delete("/{username}")
 def delete_user_endpoint(
-    username: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+        username: str,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),
 ):
     if current_user.username != username:
         raise HTTPException(status_code=403, detail="You can only delete your own user")
@@ -42,10 +41,10 @@ def delete_user_endpoint(
 
 @user_router.put("/{username}/password")
 def change_password_endpoint(
-    username: str,
-    new_password: str,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+        username: str,
+        new_password: str,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),
 ):
     if current_user.username != username:
         raise HTTPException(

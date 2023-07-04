@@ -6,8 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from database.database import SessionLocal
-from database.user import User
+from api.controller.user_controller import get_user
+from api.utils.database import SessionLocal
+from api.model.user_model import User
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -59,7 +60,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    user = get_user(SessionLocal(), username)
+    user = get_user(username)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

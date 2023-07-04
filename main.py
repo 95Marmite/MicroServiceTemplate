@@ -1,4 +1,3 @@
-import logging.config
 from datetime import timedelta
 from typing import Annotated
 
@@ -13,14 +12,12 @@ from api.auth import (
     authenticate_user,
     create_access_token,
 )
-from api.user import user_router
-from database.database import engine, Base, get_db
+from api.config import config
+from api.view.user_view import user_router, create_user_endpoint
+from api.utils.database import engine, Base, get_db
 
 app = FastAPI(debug=True)
 app.include_router(user_router)
-
-logging.config.fileConfig("config/logging.conf")
-
 
 class Token(BaseModel):
     access_token: str
@@ -34,8 +31,8 @@ def startup_event():
 
 @app.post("/token", response_model=Token)
 def login_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        db: Session = Depends(get_db),
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -52,4 +49,5 @@ def login_access_token(
 
 
 if __name__ == "__main__":
+    #create_user_endpoint("root", "root")
     uvicorn.run(app)

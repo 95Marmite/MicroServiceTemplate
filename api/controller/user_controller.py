@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from database.database import engine
-from database.user import User
+from api.utils.database import engine, get_db
+from api.model.user_model import User
 
 
 def get_user(username: str):
@@ -13,6 +13,8 @@ def get_user(username: str):
 
 def create_user(db: Session, username: str, password: str):
     user = User(username=username, hashed_password=password)
+    db_gen = get_db()
+    db = next(db_gen)
     db.add(user)
     db.commit()
     db.refresh(user)
